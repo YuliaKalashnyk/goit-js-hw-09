@@ -9,45 +9,39 @@ const options = {
   clickToClose: true,
   cssAnimationStyle: 'from-right',
 };
+form.addEventListener('submit', onSubmitForm);
 
-form.addEventListener('click', onPromiseCreate);
-
-function createPromise(position, delay) {
-  return new Promise((resolve, reject) => {
-    const shouldResolve = Math.random() > 0.3;
-    setTimeout(() => {
-      if (shouldResolve) {
-        resolve({ position, delay });
-      } else {
-        reject({ position, delay });
-      }
-    }, delay);
-  });
-}
-
-function onPromiseCreate(e) {
+function onSubmitForm(e) {
   e.preventDefault();
-  const { delay, step, amount } = e.currentTarget.elements;
-  let inputDelay = Number(delay.value);
-  let inputStep = Number(step.value);
-  let inputAmount = Number(amount.value);
 
-  for (let i = 1; i <= inputAmount; i += 1) {
-    inputDelay += inputStep;
+  let delay = Number(e.currentTarget.delay.value);
+  const step = Number(e.currentTarget.step.value);
+  const amount = Number(e.currentTarget.amount.value);
 
-    createPromise(i, inputDelay)
+  for (let position = 1; position <= amount; position += 1) {
+    createPromise(position, delay)
       .then(({ position, delay }) => {
-        Notify.success(
-          `✅ Fulfilled promise ${position} in ${delay}ms`,
-          options
-        );
+        setTimeout(() => {
+          Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`, options);
+        }, delay);
       })
       .catch(({ position, delay }) => {
-        Notify.failure(
-          `❌ Rejected promise ${position} in ${delay}ms`,
-          options
-        );
+        setTimeout(() => {
+          Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`, options);
+        }, delay);
       });
-    e.currentTarget.reset();
+    delay += step;
   }
+}
+
+function createPromise(position, delay) {
+  const shouldResolve = Math.random() > 0.3;
+  const objectPromise = { position, delay };
+
+  return new Promise((resolve, reject) => {
+    if (shouldResolve) {
+      resolve(objectPromise);
+    }
+    reject(objectPromise);
+  });
 }

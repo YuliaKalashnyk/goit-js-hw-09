@@ -69,8 +69,10 @@ class Timer {
       const currentTime = Date.now();
       const deltaTime = selectedTime - currentTime;
       const componentsTimer = convertMs(deltaTime);
+    //   console.log(deltaTime);
+    //   console.log(componentsTimer);
       this.updateComponentsTimer(componentsTimer);
-      if (deltaTime <= 0) {
+      if (componentsTimer.days <= 0 && componentsTimer.hours <= 0 && componentsTimer.minutes <= 0 && componentsTimer.seconds <= 0) {
         this.stopTimer();
       }
     }, 1000);
